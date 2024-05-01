@@ -7,12 +7,13 @@ using UnityEngine;
 public class Planet : MonoBehaviour {
 
     [Range(2,256)]
-    public int resolution = 50;
+    public int resolution = 150;
     public bool autoUpdate = true;
     PlanetSettings planetSettings = new();
     //Allows MeshFilters to be saved in inspector
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;
+    ColourGenerator colourGenerator = new ColourGenerator();
     TerrainFace[] terrainFaces;
     
     
@@ -33,6 +34,7 @@ public class Planet : MonoBehaviour {
 
 	void Initialize()
     {
+        colourGenerator.UpdateSettings(planetSettings);
         RandomizeValues();
 
         if (meshFilters == null || meshFilters.Length == 0)
@@ -50,23 +52,58 @@ public class Planet : MonoBehaviour {
                 GameObject meshObj = new GameObject("mesh");
                 meshObj.transform.parent = transform;
 
-                meshObj.AddComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Standard"));
+                meshObj.AddComponent<MeshRenderer>();
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
             }
+            meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = planetSettings.planetMaterial;
 
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, resolution, directions[i], planetSettings);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, resolution, directions[i], ref planetSettings);
         }
     }
 
     void RandomizeValues(){
+        planetSettings.planetMaterial = new Material(Resources.Load("planetShader", typeof(Shader)) as Shader);
         planetSettings.planetColour = Random.ColorHSV(0f,1f,0.5f,1f,0.2f,1f,1f,1f);
-        planetSettings.radius = Random.Range(1f,5f);
-        planetSettings.noiseScale = Random.Range(0.85f, 1.0f);
+        planetSettings.radius = Random.Range(1f,3f);
+        planetSettings.simpleNoiseScale = Random.Range(0.5f, 1.0f);
+        planetSettings.ridgeNoiseScale = Random.Range(0.5f, 1f);
+        planetSettings.simpleNoiseStrength = Random.Range(0.2f, 0.4f);
+        planetSettings.ridgeNoiseScale = Random.Range(0.2f,0.4f);
         planetSettings.noiseOffset.Set(Random.Range(-255, 255), Random.Range(-255, 255), Random.Range(-255, 255));
-        planetSettings.noiseStrength = Random.Range(0.5f, 1.5f);
     }
 
+    void CreateGradient()
+    {
+        GradientColorKey[] gck = new GradientColorKey[5];
+        GradientAlphaKey[] gak = new GradientAlphaKey[5];
+
+        gck[0].color = Color.blue;
+        gck[0].time = -1;
+        gak[0].time = -1;
+        gak[0].alpha = 0.0F;
+
+        gck[1].color = new Color32(253,238,115, 1); //sandy yellow
+        gck[1].time = 0f;
+        gak[1].time = 0f;
+        gak[1].alpha = 0.0F;
+
+        gck[2].color = new Color32(205,220,57, 1); //grassy light green
+        gck[2].time = 0.1f;
+        gak[2].time = 0.1f;
+        gak[2].alpha = 0.0F;
+
+        gck[3].color = Color.green;
+        gck[3].time = 0.4f;
+        gak[3].time = 0.4f;
+        gak[3].alpha = 0.0F;
+
+        gck[4].color = Color.grey;
+        gck[4].time = 0.9f;
+        gak[4].time = 0.9f;
+        gak[4].alpha = 0.0F;
+        planetSettings.gradient.SetKeys(gck, gak);
+    }
     public void GeneratePlanet()
     {
         Initialize();
@@ -98,13 +135,13 @@ public class Planet : MonoBehaviour {
         {
             face.ConstructMesh();
         }
+
+        colourGenerator.UpdateElevation(planetSettings.radius, planetSettings.maxElevation);
     }
 
     void GenerateColours()
     {
-        foreach(MeshFilter m in meshFilters)
-        {
-            m.GetComponent<MeshRenderer>().sharedMaterial.color = planetSettings.planetColour;
-        }
+        CreateGradient();
+        colourGenerator.UpdateColours();
     }
 }

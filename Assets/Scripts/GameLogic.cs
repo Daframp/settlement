@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameLogic : MonoBehaviour
 {
     GameObject planet;
+    public Shader planetShader;
     void Start()
     {
         GenerateNewPlanet();
@@ -21,9 +22,9 @@ public class GameLogic : MonoBehaviour
         //spawn object
         planet = new GameObject("planet");
         //Add Components
+        planet.AddComponent<MeshRenderer>();
         planet.AddComponent<Planet>();
         planet.AddComponent<MeshFilter>();
         planet.AddComponent<SphereCollider>();
-        planet.AddComponent<MeshRenderer>();
     }
 }

@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b1f3117ea47874086e3890e1c27d88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planetShader: {fileID: -6465566751694194690, guid: 46971b7011e17704db310264e3c7947a, type: 3}
 --- !u!4 &29259477
 Transform:
   m_ObjectHideFlags: 0
@@ -447,6 +448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 800599689}
   - component: {fileID: 800599688}
+  - component: {fileID: 800599690}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -531,6 +533,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &800599690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800599687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &1104698088
 GameObject:
   m_ObjectHideFlags: 0
